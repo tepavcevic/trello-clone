@@ -30,7 +30,7 @@ export function moveList(draggedId: string, hoverId: string): Action {
   };
 }
 
-export function setDraggedItem(draggedItem: DragItem): Action {
+export function setDraggedItem(draggedItem: DragItem | null): Action {
   return {
     type: "SET_DRAGGED_ITEM",
     payload: draggedItem,

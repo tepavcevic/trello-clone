@@ -1,6 +1,6 @@
 import { DragItem } from "../DragItem";
 import { Action } from "./actions";
-import { findItemIndexById, moveItem } from "./taskItems";
+import { findItemIndexById, moveItem } from "../utils/taskItems";
 
 export type Task = {
   id: string;

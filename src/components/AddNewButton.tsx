@@ -5,13 +5,13 @@ import NewItemForm from "./NewItemForm";
 type AddNewItemProps = {
   onAdd(text: string): void;
   toggleButtonText: string;
-  dark?: boolean;
+  $dark?: boolean;
 };
 
 export default function AddNewItem({
   onAdd,
   toggleButtonText,
-  dark,
+  $dark,
 }: AddNewItemProps) {
   const [showForm, setShowForm] = useState<boolean>(false);
 
@@ -26,7 +26,7 @@ export default function AddNewItem({
     );
 
   return (
-    <AddItemButton dark={dark} onClick={() => setShowForm(true)}>
+    <AddItemButton $dark={$dark} onClick={() => setShowForm(true)}>
       {toggleButtonText}
     </AddItemButton>
   );

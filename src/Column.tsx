@@ -40,7 +40,7 @@ export default function Column({ id, text }: ColumnProps) {
       <AddNewItem
         toggleButtonText="+ Add new card"
         onAdd={(text) => dispatch(addTask(text, id))}
-        dark={true}
+        $dark={true}
       />
     </ColumnContainer>
   );

@@ -8,6 +8,15 @@ export type Action =
       payload: { draggedId: string; hoverId: string };
     }
   | {
+      type: "MOVE_TASK";
+      payload: {
+        draggedItemId: string;
+        hoveredItemId: string | null;
+        sourceColumnId: string;
+        targetColumnId: string;
+      };
+    }
+  | {
       type: "SET_DRAGGED_ITEM";
       payload: DragItem | null;
     };
@@ -34,5 +43,22 @@ export function setDraggedItem(draggedItem: DragItem | null): Action {
   return {
     type: "SET_DRAGGED_ITEM",
     payload: draggedItem,
+  };
+}
+
+export function moveTask(
+  draggedItemId: string,
+  hoveredItemId: string | null,
+  sourceColumnId: string,
+  targetColumnId: string
+): Action {
+  return {
+    type: "MOVE_TASK",
+    payload: {
+      draggedItemId,
+      hoveredItemId,
+      sourceColumnId,
+      targetColumnId,
+    },
   };
 }

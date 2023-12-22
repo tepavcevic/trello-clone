@@ -2,7 +2,7 @@ import AddNewItem from "./components/AddNewButton";
 import Card from "./Card";
 import { useAppState } from "./hooks/useAppState";
 import { ColumnContainer, ColumnTitle } from "./styles";
-import { addTask, moveList } from "./context/actions";
+import { addTask, moveList, moveTask, setDraggedItem } from "./context/actions";
 import { useRef } from "react";
 import useDragItem from "./hooks/useDragItem";
 import { useDrop } from "react-dnd";
@@ -19,8 +19,9 @@ export default function Column({ text, id, isPreview = false }: ColumnProps) {
   const { draggedItem, getTasksByListId, dispatch } = useAppState();
   const tasks = getTasksByListId(id);
   const ref = useRef<HTMLDivElement>(null);
+  const { drag } = useDragItem({ type: "COLUMN", id, text });
   const [, drop] = useDrop({
-    accept: "COLUMN",
+    accept: ["COLUMN", "CARD"],
     hover: throttle(200, () => {
       if (!draggedItem) {
         return;
@@ -31,11 +32,19 @@ export default function Column({ text, id, isPreview = false }: ColumnProps) {
         }
 
         dispatch(moveList(draggedItem.id, id));
+      } else {
+        if (draggedItem.columnId === id) {
+          return;
+        }
+        if (tasks.length) {
+          return;
+        }
+
+        dispatch(moveTask(draggedItem.id, null, draggedItem.columnId, id));
+        dispatch(setDraggedItem({ ...draggedItem, columnId: id }));
       }
     }),
   });
-
-  const { drag } = useDragItem({ type: "COLUMN", id, text });
 
   drag(drop(ref));
 
@@ -47,7 +56,7 @@ export default function Column({ text, id, isPreview = false }: ColumnProps) {
     >
       <ColumnTitle>{text}</ColumnTitle>
       {tasks.map((task) => (
-        <Card text={task.text} key={task.id} id={task.id} />
+        <Card id={task.id} columnId={id} text={task.text} key={task.id} />
       ))}
       <AddNewItem
         toggleButtonText="+ Add another card"

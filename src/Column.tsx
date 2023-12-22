@@ -10,38 +10,49 @@ import { throttle } from "throttle-debounce-ts";
 import { isHidden } from "./utils/isHidden";
 
 type ColumnProps = {
-  id: string;
   text: string;
+  id: string;
+  isPreview?: boolean;
 };
 
-export default function Column({ id, text }: ColumnProps) {
+export default function Column({ text, id, isPreview = false }: ColumnProps) {
   const { draggedItem, getTasksByListId, dispatch } = useAppState();
   const tasks = getTasksByListId(id);
   const ref = useRef<HTMLDivElement>(null);
-  const { drag } = useDragItem({ type: "COLUMN", id, text });
   const [, drop] = useDrop({
     accept: "COLUMN",
     hover: throttle(200, () => {
-      if (!draggedItem) return;
+      if (!draggedItem) {
+        return;
+      }
       if (draggedItem.type === "COLUMN") {
-        if (draggedItem.id === id) return;
+        if (draggedItem.id === id) {
+          return;
+        }
+
         dispatch(moveList(draggedItem.id, id));
       }
     }),
   });
 
+  const { drag } = useDragItem({ type: "COLUMN", id, text });
+
   drag(drop(ref));
 
   return (
-    <ColumnContainer ref={ref} $isHidden={isHidden(draggedItem, "COLUMN", id)}>
+    <ColumnContainer
+      $isPreview={isPreview}
+      ref={ref}
+      $isHidden={isHidden(draggedItem, "COLUMN", id, isPreview)}
+    >
       <ColumnTitle>{text}</ColumnTitle>
       {tasks.map((task) => (
-        <Card key={id} id={id} text={task.text} />
+        <Card text={task.text} key={task.id} id={task.id} />
       ))}
       <AddNewItem
-        toggleButtonText="+ Add new card"
+        toggleButtonText="+ Add another card"
         onAdd={(text) => dispatch(addTask(text, id))}
-        $dark={true}
+        $dark
       />
     </ColumnContainer>
   );
